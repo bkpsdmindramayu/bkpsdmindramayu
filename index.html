@@ -1,0 +1,738 @@
+<!DOCTYPE html>
+<html lang="id" class="h-full">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Monitoring Data Pegawai</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/jspdf-autotable/3.5.31/jspdf.plugin.autotable.min.js"></script>
+  <script src="/_sdk/element_sdk.js"></script>
+  <script src="/_sdk/data_sdk.js"></script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body class="h-full bg-slate-50" style="font-family: 'Plus Jakarta Sans', sans-serif;">
+  <div id="app" class="h-full w-full min-h-full overflow-auto">
+    <!-- Header -->
+    <header class="bg-gradient-to-r from-blue-900 via-blue-800 to-blue-900 text-white shadow-lg sticky top-0 z-40">
+      <div class="w-full px-4 py-6">
+        <div class="max-w-7xl mx-auto flex items-center justify-between">
+          <div class="flex items-center gap-4">
+            <div class="w-14 h-14 bg-white/10 rounded-xl flex items-center justify-center backdrop-blur-sm">
+              <svg class="w-8 h-8 text-amber-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+              </svg>
+            </div>
+            <div>
+              <h1 id="app-title" class="text-2xl font-bold">Monitoring Data Pegawai</h1>
+              <p id="app-subtitle" class="text-sm text-blue-200">Sistem Informasi Kepegawaian</p>
+            </div>
+          </div>
+          <button id="back-btn" class="hidden px-4 py-2 bg-white/10 hover:bg-white/20 rounded-lg transition-all flex items-center gap-2">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+            </svg>
+            <span class="hidden sm:inline">Kembali</span>
+          </button>
+        </div>
+      </div>
+    </header>
+
+    <!-- Main Content -->
+    <main class="w-full px-4 py-8">
+      <div class="max-w-7xl mx-auto">
+        <!-- Projects View -->
+        <div id="projects-view">
+          <!-- Database Section -->
+          <section class="bg-white rounded-xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+              <h2 class="text-lg font-semibold text-slate-800 flex items-center gap-2">
+                <svg class="w-5 h-5 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z"/>
+                </svg>
+                Database Pegawai Global
+              </h2>
+            </div>
+            <div class="p-6">
+              <div class="bg-blue-50 border border-blue-200 rounded-lg p-4 mb-4">
+                <p class="text-sm text-blue-800"><strong>💡 Info:</strong> Import database sekali saja. Data tersedia di semua proyek dengan AutoFill otomatis saat input NIP.</p>
+              </div>
+              <div class="flex flex-wrap gap-3 mb-4">
+                <button id="download-template" class="flex items-center gap-2 px-4 py-2.5 bg-cyan-600 hover:bg-cyan-700 text-white font-medium rounded-lg transition-all text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                  Download Template
+                </button>
+                <label class="flex items-center gap-2 px-4 py-2.5 bg-emerald-600 hover:bg-emerald-700 text-white font-medium rounded-lg transition-all cursor-pointer text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+                  </svg>
+                  <span>Import Excel</span>
+                  <input type="file" id="import-file" accept=".xlsx,.xls" class="hidden">
+                </label>
+                <button id="view-db" class="px-4 py-2.5 bg-slate-600 hover:bg-slate-700 text-white font-medium rounded-lg transition-all text-sm">Lihat Database</button>
+                <button id="clear-db" class="px-4 py-2.5 bg-red-600 hover:bg-red-700 text-white font-medium rounded-lg transition-all text-sm">Hapus Database</button>
+              </div>
+              <div class="grid grid-cols-3 gap-3">
+                <div class="bg-blue-50 rounded-lg p-3 text-center border border-blue-200">
+                  <p class="text-3xl font-bold text-blue-600" id="db-count">5</p>
+                  <p class="text-xs text-blue-700 font-medium mt-1">Data Database</p>
+                </div>
+                <div class="bg-emerald-50 rounded-lg p-3 text-center border border-emerald-200">
+                  <p class="text-3xl font-bold text-emerald-600" id="project-count">0</p>
+                  <p class="text-xs text-emerald-700 font-medium mt-1">Proyek Aktif</p>
+                </div>
+                <div class="bg-amber-50 rounded-lg p-3 text-center border border-amber-200">
+                  <p class="text-3xl font-bold text-amber-600" id="slot-count">999</p>
+                  <p class="text-xs text-amber-700 font-medium mt-1">Sisa Slot</p>
+                </div>
+              </div>
+            </div>
+          </section>
+
+          <!-- Create Project -->
+          <section class="bg-white rounded-xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+              <h2 class="text-lg font-semibold text-slate-800">Buat Proyek Baru</h2>
+            </div>
+            <div class="p-6 flex gap-3">
+              <input type="text" id="project-name" placeholder="Nama proyek..." class="flex-1 px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+              <button id="create-project" class="px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all text-sm">
+                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                  <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                </svg>
+              </button>
+            </div>
+          </section>
+
+          <!-- Projects Grid -->
+          <div id="projects-grid" class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
+            <div id="empty-state" class="col-span-full text-center py-12">
+              <svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+              </svg>
+              <p class="text-slate-500 font-medium">Belum ada proyek</p>
+            </div>
+          </div>
+        </div>
+
+        <!-- Project Detail View -->
+        <div id="detail-view" class="hidden">
+          <!-- Form Input -->
+          <section class="bg-white rounded-xl shadow-sm border border-slate-200 mb-8 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200">
+              <h2 class="text-lg font-semibold text-slate-800">Form Input Data Pegawai</h2>
+              <p id="current-project" class="text-sm text-slate-600 mt-1">Proyek: -</p>
+            </div>
+            <form id="form" class="p-6">
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 mb-6">
+                <!-- NIP dengan AutoFill -->
+                <div class="relative">
+                  <label class="block text-sm font-medium text-slate-700 mb-2">NIP <span class="text-red-500">*</span></label>
+                  <input type="text" id="nip" autocomplete="off" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Ketik NIP...">
+                  <div id="autocomplete" class="hidden absolute top-full left-0 right-0 mt-1 bg-white border border-slate-300 rounded-lg shadow-lg max-h-40 overflow-y-auto z-10"></div>
+                  <p class="text-xs text-slate-500 mt-1">💡 Data otomatis terisi dari database</p>
+                </div>
+
+                <!-- Nama -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Nama <span class="text-red-500">*</span></label>
+                  <input type="text" id="nama" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Pangkat -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Pangkat <span class="text-red-500">*</span></label>
+                  <input type="text" id="pangkat" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Jabatan Lama -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Jabatan Lama <span class="text-red-500">*</span></label>
+                  <input type="text" id="jabatan_lama" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Kelas Lama -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Kelas Lama <span class="text-red-500">*</span></label>
+                  <input type="text" id="kelas_lama" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Unit Lama -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Unit Lama <span class="text-red-500">*</span></label>
+                  <input type="text" id="unit_lama" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Klasifikasi -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Klasifikasi <span class="text-red-500">*</span></label>
+                  <input type="text" id="klasifikasi" readonly class="w-full px-4 py-2.5 border border-slate-300 rounded-lg bg-slate-100 text-sm">
+                </div>
+
+                <!-- Jabatan Baru -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Jabatan Baru <span class="text-red-500">*</span></label>
+                  <select id="jabatan_baru" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                    <option value="">Pilih Jabatan</option>
+                    <option value="Pengadministrasi Perkantoran">Pengadministrasi Perkantoran</option>
+                    <option value="Pengolah Data dan Informasi">Pengolah Data dan Informasi</option>
+                    <option value="Penelaah Teknis Kebijakan">Penelaah Teknis Kebijakan</option>
+                    <option value="Lainnya">Lainnya (Ketik Manual)</option>
+                  </select>
+                </div>
+
+                <!-- Kelas Baru -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Kelas Baru <span class="text-red-500">*</span></label>
+                  <input type="number" id="kelas_baru" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm">
+                </div>
+
+                <!-- Unit Baru -->
+                <div>
+                  <label class="block text-sm font-medium text-slate-700 mb-2">Unit Baru <span class="text-red-500">*</span></label>
+                  <input type="text" id="unit_baru" class="w-full px-4 py-2.5 border border-slate-300 rounded-lg focus:ring-2 focus:ring-blue-500 text-sm" placeholder="Unit organisasi baru">
+                </div>
+              </div>
+
+              <!-- Buttons -->
+              <div class="flex gap-3 pt-4 border-t border-slate-200">
+                <button type="submit" id="submit-btn" class="flex items-center gap-2 px-6 py-2.5 bg-blue-600 hover:bg-blue-700 text-white font-medium rounded-lg transition-all text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+                  </svg>
+                  Simpan
+                </button>
+                <button type="reset" class="px-6 py-2.5 bg-slate-100 hover:bg-slate-200 text-slate-700 font-medium rounded-lg transition-all text-sm border border-slate-300">Reset</button>
+              </div>
+            </form>
+          </section>
+
+          <!-- Data Table -->
+          <section class="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="bg-slate-50 px-6 py-4 border-b border-slate-200 flex items-center justify-between">
+              <div>
+                <h2 class="text-lg font-semibold text-slate-800">Data Pegawai</h2>
+                <p id="record-count" class="text-sm text-slate-600 mt-1">0 data</p>
+              </div>
+              <div class="flex gap-2">
+                <button id="export-pdf" class="px-4 py-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-all text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </button>
+                <button id="export-excel" class="px-4 py-2 bg-emerald-600 hover:bg-emerald-700 text-white rounded-lg transition-all text-sm">
+                  <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 10v6m0 0l-3-3m3 3l3-3m2 8H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+                  </svg>
+                </button>
+              </div>
+            </div>
+            <div class="overflow-x-auto">
+              <table class="w-full text-sm">
+                <thead class="bg-slate-50 border-b border-slate-200">
+                  <tr>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">No</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Nama</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">NIP</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Pangkat</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Jabatan Lama</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Kelas Lama</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Unit Lama</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Klasifikasi</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Jabatan Baru</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Kelas Baru</th>
+                    <th class="text-left px-4 py-3 font-semibold text-slate-600">Unit Baru</th>
+                    <th class="text-center px-4 py-3 font-semibold text-slate-600">Aksi</th>
+                  </tr>
+                </thead>
+                <tbody id="table-body" class="divide-y divide-slate-200">
+                  <tr id="empty-table">
+                    <td colspan="12" class="text-center py-8 text-slate-500">Belum ada data</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </div>
+    </main>
+
+    <!-- Database Modal -->
+    <div id="db-modal" class="hidden fixed inset-0 bg-black/50 z-50 flex items-center justify-center p-4">
+      <div class="bg-white rounded-lg shadow-xl max-w-4xl w-full max-h-[80vh] overflow-auto">
+        <div class="sticky top-0 bg-slate-50 px-6 py-4 border-b border-slate-200 flex justify-between items-center">
+          <h3 class="text-lg font-semibold">Database Pegawai</h3>
+          <button onclick="closeDB()" class="p-1 hover:bg-slate-200 rounded">
+            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12"/>
+            </svg>
+          </button>
+        </div>
+        <div class="p-6 overflow-x-auto">
+          <table class="w-full text-xs">
+            <thead class="bg-slate-50">
+              <tr>
+                <th class="text-left px-3 py-2 font-semibold">NIP</th>
+                <th class="text-left px-3 py-2 font-semibold">Nama</th>
+                <th class="text-left px-3 py-2 font-semibold">Pangkat</th>
+                <th class="text-left px-3 py-2 font-semibold">Jabatan</th>
+                <th class="text-left px-3 py-2 font-semibold">Kelas</th>
+                <th class="text-left px-3 py-2 font-semibold">Klasifikasi</th>
+                <th class="text-left px-3 py-2 font-semibold">Unit</th>
+              </tr>
+            </thead>
+            <tbody id="db-table" class="divide-y">
+              <tr><td colspan="7" class="text-center py-8 text-slate-500">Belum ada data</td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+
+    <!-- Toast -->
+    <div id="toast" class="hidden fixed bottom-4 right-4 z-50 bg-slate-800 text-white px-6 py-3 rounded-lg shadow-lg flex items-center gap-2">
+      <svg id="toast-icon" class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 13l4 4L19 7"/>
+      </svg>
+      <span id="toast-text">Pesan</span>
+    </div>
+  </div>
+
+  <script>
+    // State with sample data for testing
+    let db = [
+      { nip: '19800115201001001', nama: 'Budi Santoso', pangkat: 'Juru Muda', jabatan: 'Pengadministrasi Perkantoran', kelas: '5', klasifikasi: 'Klerek', unit: 'Bagian Administrasi' },
+      { nip: '19850220202002002', nama: 'Siti Nurhaliza', pangkat: 'Juru Muda Tingkat I', jabatan: 'Pengolah Data dan Informasi', kelas: '6', klasifikasi: 'Fungsional', unit: 'Bagian IT' },
+      { nip: '19900330303003003', nama: 'Ahmad Wijaya', pangkat: 'Juru', jabatan: 'Penelaah Teknis Kebijakan', kelas: '7', klasifikasi: 'Struktural', unit: 'Bagian Perencanaan' },
+      { nip: '19750515404004004', nama: 'Eka Putri Rahmawati', pangkat: 'Pengatur', jabatan: 'Pengadministrasi Perkantoran', kelas: '5', klasifikasi: 'Klerek', unit: 'Bagian Keuangan' },
+      { nip: '19880625505005005', nama: 'Rudi Hermawan', pangkat: 'Juru Muda', jabatan: 'Pengolah Data dan Informasi', kelas: '6', klasifikasi: 'Fungsional', unit: 'Bagian IT' }
+    ];
+    let projects = [];
+    let employees = [];
+    let currentProjectId = null;
+    let editingId = null;
+
+    const jobClasses = {
+      'Pengadministrasi Perkantoran': '5',
+      'Pengolah Data dan Informasi': '6',
+      'Penelaah Teknis Kebijakan': '7'
+    };
+
+    // DOM Elements
+    const downloadTemplateBtn = document.getElementById('download-template');
+    const importFileInput = document.getElementById('import-file');
+    const viewDbBtn = document.getElementById('view-db');
+    const clearDbBtn = document.getElementById('clear-db');
+    const projectsView = document.getElementById('projects-view');
+    const detailView = document.getElementById('detail-view');
+    const projectsGrid = document.getElementById('projects-grid');
+    const projectNameInput = document.getElementById('project-name');
+    const createProjectBtn = document.getElementById('create-project');
+    const form = document.getElementById('form');
+    const tableBody = document.getElementById('table-body');
+    const nipInput = document.getElementById('nip');
+    const namaInput = document.getElementById('nama');
+    const autocompleteDiv = document.getElementById('autocomplete');
+
+    // Show toast
+    function toast(msg, success = true) {
+      const toastEl = document.getElementById('toast');
+      const icon = document.getElementById('toast-icon');
+      document.getElementById('toast-text').textContent = msg;
+      toastEl.classList.remove('hidden');
+      toastEl.className = `fixed bottom-4 right-4 z-50 px-6 py-3 rounded-lg shadow-lg flex items-center gap-2 text-white ${success ? 'bg-slate-800' : 'bg-red-600'}`;
+      setTimeout(() => toastEl.classList.add('hidden'), 3000);
+    }
+
+    // Download template
+    downloadTemplateBtn.addEventListener('click', () => {
+      const templateData = [
+        ['NIP', 'NAMA', 'PANGKAT', 'JABATAN', 'KELAS JABATAN LAMA', 'KLASIFIKASI JABATAN LAMA', 'UNIT ORGANISASI'],
+        ['19800115201001001', 'Contoh Pegawai 1', 'Juru Muda', 'Pengadministrasi Perkantoran', '5', 'Klerek', 'Bagian Administrasi'],
+        ['19850220202002002', 'Contoh Pegawai 2', 'Pengolah Data', '6', 'Fungsional', 'Bagian IT']
+      ];
+      const ws = XLSX.utils.aoa_to_sheet(templateData);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Template');
+      XLSX.writeFile(wb, 'Template-Data-Pegawai.xlsx');
+      toast('✓ Template berhasil diunduh');
+    });
+
+    // Import Excel
+    importFileInput.addEventListener('change', (e) => {
+      const file = e.target.files[0];
+      if (!file) return;
+      const reader = new FileReader();
+      reader.onload = (event) => {
+        try {
+          const wb = XLSX.read(event.target.result, { type: 'array' });
+          const ws = wb.Sheets[wb.SheetNames[0]];
+          const data = XLSX.utils.sheet_to_json(ws);
+          db = data.map(row => ({
+            nip: String(row.NIP || row.nip || ''),
+            nama: String(row.NAMA || row.nama || ''),
+            pangkat: String(row.PANGKAT || row.pangkat || ''),
+            jabatan: String(row.JABATAN || row.JABATAN_LAMA || ''),
+            kelas: String(row['KELAS JABATAN LAMA'] || row.kelas || ''),
+            klasifikasi: String(row['KLASIFIKASI JABATAN LAMA'] || row.klasifikasi || ''),
+            unit: String(row['UNIT ORGANISASI'] || row.unit || '')
+          })).filter(x => x.nip);
+          updateStats();
+          toast(`✓ ${db.length} data berhasil diimport`);
+          importFileInput.value = '';
+        } catch (err) {
+          toast('Gagal import: ' + err.message, false);
+        }
+      };
+      reader.readAsArrayBuffer(file);
+    });
+
+    // View database
+    viewDbBtn.addEventListener('click', () => {
+      const dbTable = document.getElementById('db-table');
+      if (db.length === 0) {
+        dbTable.innerHTML = '<tr><td colspan="7" class="text-center py-8 text-slate-500">Belum ada data</td></tr>';
+      } else {
+        dbTable.innerHTML = db.map(emp => `
+          <tr>
+            <td class="px-3 py-2">${emp.nip}</td>
+            <td class="px-3 py-2">${emp.nama}</td>
+            <td class="px-3 py-2">${emp.pangkat}</td>
+            <td class="px-3 py-2">${emp.jabatan}</td>
+            <td class="px-3 py-2">${emp.kelas}</td>
+            <td class="px-3 py-2">${emp.klasifikasi}</td>
+            <td class="px-3 py-2">${emp.unit}</td>
+          </tr>
+        `).join('');
+      }
+      document.getElementById('db-modal').classList.remove('hidden');
+    });
+
+    window.closeDB = () => {
+      document.getElementById('db-modal').classList.add('hidden');
+    };
+
+    // Clear database
+    clearDbBtn.addEventListener('click', () => {
+      if (confirm('Hapus semua database?')) {
+        db = [];
+        updateStats();
+        toast('Database dihapus');
+      }
+    });
+
+    // Update stats
+    function updateStats() {
+      document.getElementById('db-count').textContent = db.length;
+      document.getElementById('project-count').textContent = projects.length;
+      document.getElementById('slot-count').textContent = Math.max(0, 999 - employees.length);
+    }
+
+    // NIP autocomplete
+    let acItems = [];
+    nipInput.addEventListener('input', function() {
+      const val = this.value.trim();
+      if (!val) {
+        autocompleteDiv.classList.add('hidden');
+        clearAutoFill();
+        return;
+      }
+      acItems = db.filter(e => e.nip.includes(val));
+      if (acItems.length === 0) {
+        autocompleteDiv.classList.add('hidden');
+        return;
+      }
+      autocompleteDiv.innerHTML = acItems.map((e, i) => `
+        <div class="px-4 py-2 hover:bg-slate-100 cursor-pointer" onclick="selectAC(${i})">
+          <strong>${e.nip}</strong> - ${e.nama}
+        </div>
+      `).join('');
+      autocompleteDiv.classList.remove('hidden');
+    });
+
+    window.selectAC = (i) => {
+      const e = acItems[i];
+      nipInput.value = e.nip;
+      namaInput.value = e.nama;
+      document.getElementById('pangkat').value = e.pangkat;
+      document.getElementById('jabatan_lama').value = e.jabatan;
+      document.getElementById('kelas_lama').value = e.kelas;
+      document.getElementById('klasifikasi').value = e.klasifikasi;
+      document.getElementById('unit_lama').value = e.unit;
+      autocompleteDiv.classList.add('hidden');
+    };
+
+    function clearAutoFill() {
+      namaInput.value = '';
+      document.getElementById('pangkat').value = '';
+      document.getElementById('jabatan_lama').value = '';
+      document.getElementById('kelas_lama').value = '';
+      document.getElementById('klasifikasi').value = '';
+      document.getElementById('unit_lama').value = '';
+    }
+
+    document.addEventListener('click', (e) => {
+      if (!e.target.closest('.relative')) autocompleteDiv.classList.add('hidden');
+    });
+
+    // Create project
+    createProjectBtn.addEventListener('click', async () => {
+      const name = projectNameInput.value.trim();
+      if (!name) {
+        toast('Masukkan nama proyek', false);
+        return;
+      }
+      const newProject = {
+        project_name: name,
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
+      const res = await window.dataSdk.create(newProject);
+      if (res.isOk) {
+        toast('✓ Proyek dibuat');
+        projectNameInput.value = '';
+      } else {
+        toast('Gagal membuat proyek', false);
+      }
+    });
+
+    // Render projects
+    function renderProjects() {
+      if (projects.length === 0) {
+        projectsGrid.innerHTML = '<div id="empty-state" class="col-span-full text-center py-12"><svg class="w-16 h-16 mx-auto text-slate-300 mb-4" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/></svg><p class="text-slate-500 font-medium">Belum ada proyek</p></div>';
+        return;
+      }
+      projectsGrid.innerHTML = projects.map(p => {
+        const count = employees.filter(e => e.project_id === p.__backendId).length;
+        return `
+          <div class="bg-white rounded-lg border border-slate-200 hover:shadow-md transition-all p-4">
+            <div class="flex justify-between items-start mb-4">
+              <div>
+                <h3 class="font-semibold text-slate-800">${p.project_name}</h3>
+                <p class="text-xs text-slate-500 mt-1">${new Date(p.created_at).toLocaleDateString('id-ID')}</p>
+              </div>
+              <div class="bg-blue-100 text-blue-600 px-3 py-1 rounded text-sm font-bold">${count}</div>
+            </div>
+            <div class="flex gap-2">
+              <button onclick="openProject('${p.__backendId}')" class="flex-1 px-3 py-2 bg-blue-600 hover:bg-blue-700 text-white text-sm rounded transition-all">Buka</button>
+              <button onclick="deleteProject('${p.__backendId}')" class="px-3 py-2 bg-red-100 hover:bg-red-200 text-red-600 rounded transition-all text-sm">Hapus</button>
+            </div>
+          </div>
+        `;
+      }).join('');
+    }
+
+    window.openProject = (id) => {
+      currentProjectId = id;
+      const p = projects.find(x => x.__backendId === id);
+      document.getElementById('current-project').textContent = `Proyek: ${p.project_name}`;
+      projectsView.classList.add('hidden');
+      detailView.classList.remove('hidden');
+      document.getElementById('back-btn').classList.remove('hidden');
+      renderEmployees();
+    };
+
+    // Render employees
+    function renderEmployees() {
+      const emps = employees.filter(e => e.project_id === currentProjectId);
+      document.getElementById('record-count').textContent = `${emps.length} data`;
+      const emptyTable = document.getElementById('empty-table');
+      if (emps.length === 0) {
+        emptyTable.classList.remove('hidden');
+        return;
+      }
+      emptyTable.classList.add('hidden');
+      tableBody.innerHTML = emps.map((e, i) => `
+        <tr class="hover:bg-slate-50">
+          <td class="px-4 py-3">${i + 1}</td>
+          <td class="px-4 py-3 font-medium">${e.nama}</td>
+          <td class="px-4 py-3">${e.nip}</td>
+          <td class="px-4 py-3">${e.pangkat}</td>
+          <td class="px-4 py-3">${e.jabatan_lama}</td>
+          <td class="px-4 py-3"><span class="bg-blue-100 text-blue-800 px-2 py-1 rounded text-xs">${e.kelas_jabatan_lama}</span></td>
+          <td class="px-4 py-3">${e.unit_organisasi_lama}</td>
+          <td class="px-4 py-3"><span class="bg-purple-100 text-purple-800 px-2 py-1 rounded text-xs">${e.klasifikasi_jabatan}</span></td>
+          <td class="px-4 py-3">${e.jabatan_baru}</td>
+          <td class="px-4 py-3"><span class="bg-emerald-100 text-emerald-800 px-2 py-1 rounded text-xs">${e.kelas_jabatan_baru}</span></td>
+          <td class="px-4 py-3">${e.unit_organisasi_baru}</td>
+          <td class="px-4 py-3 text-center flex gap-1 justify-center">
+            <button onclick="editEmployee('${e.__backendId}')" class="p-1.5 text-blue-600 hover:bg-blue-50 rounded">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z"/>
+              </svg>
+            </button>
+            <button onclick="deleteEmployee('${e.__backendId}')" class="p-1.5 text-red-600 hover:bg-red-50 rounded">
+              <svg class="w-4 h-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16"/>
+              </svg>
+            </button>
+          </td>
+        </tr>
+      `).join('');
+    }
+
+    // Edit employee
+    window.editEmployee = (id) => {
+      const emp = employees.find(e => e.__backendId === id);
+      if (!emp) return;
+      editingId = id;
+      nipInput.value = emp.nip;
+      namaInput.value = emp.nama;
+      document.getElementById('pangkat').value = emp.pangkat;
+      document.getElementById('jabatan_lama').value = emp.jabatan_lama;
+      document.getElementById('kelas_lama').value = emp.kelas_jabatan_lama;
+      document.getElementById('klasifikasi').value = emp.klasifikasi_jabatan;
+      document.getElementById('unit_lama').value = emp.unit_organisasi_lama;
+      document.getElementById('jabatan_baru').value = emp.jabatan_baru;
+      document.getElementById('kelas_baru').value = emp.kelas_jabatan_baru;
+      document.getElementById('unit_baru').value = emp.unit_organisasi_baru;
+      document.getElementById('submit-btn').textContent = 'Update';
+      form.scrollIntoView({ behavior: 'smooth' });
+    };
+
+    // Delete employee
+    window.deleteEmployee = async (id) => {
+      if (!confirm('Hapus data ini?')) return;
+      const emp = employees.find(e => e.__backendId === id);
+      if (emp) {
+        const res = await window.dataSdk.delete(emp);
+        if (res.isOk) toast('Data dihapus');
+      }
+    };
+
+    // Delete project
+    window.deleteProject = async (id) => {
+      if (!confirm('Hapus proyek ini? Semua data akan dihapus.')) return;
+      const proj = projects.find(p => p.__backendId === id);
+      if (proj) {
+        const res = await window.dataSdk.delete(proj);
+        if (res.isOk) toast('Proyek dihapus');
+      }
+    };
+
+    // Form submit
+    form.addEventListener('submit', async (e) => {
+      e.preventDefault();
+      const jobClass = document.getElementById('jabatan_baru').value;
+      const kelasValue = jobClasses[jobClass] || document.getElementById('kelas_baru').value;
+      const emp = {
+        project_id: currentProjectId,
+        nip: nipInput.value,
+        nama: namaInput.value,
+        pangkat: document.getElementById('pangkat').value,
+        jabatan_lama: document.getElementById('jabatan_lama').value,
+        kelas_jabatan_lama: document.getElementById('kelas_lama').value,
+        unit_organisasi_lama: document.getElementById('unit_lama').value,
+        klasifikasi_jabatan: document.getElementById('klasifikasi').value,
+        jabatan_baru: jobClass,
+        kelas_jabatan_baru: kelasValue,
+        unit_organisasi_baru: document.getElementById('unit_baru').value,
+        created_at: new Date().toISOString()
+      };
+      let res;
+      if (editingId) {
+        const existing = employees.find(e => e.__backendId === editingId);
+        res = await window.dataSdk.update({ ...existing, ...emp });
+      } else {
+        res = await window.dataSdk.create(emp);
+      }
+      if (res.isOk) {
+        toast('✓ Data disimpan');
+        form.reset();
+        editingId = null;
+        document.getElementById('submit-btn').textContent = 'Simpan';
+      }
+    });
+
+    // Export PDF
+    document.getElementById('export-pdf').addEventListener('click', () => {
+      const emps = employees.filter(e => e.project_id === currentProjectId);
+      if (emps.length === 0) {
+        toast('Tidak ada data', false);
+        return;
+      }
+      const { jsPDF } = window.jspdf;
+      const doc = new jsPDF('l');
+      const rows = emps.map((e, i) => [i + 1, e.nama, e.nip, e.pangkat, e.jabatan_lama, e.kelas_jabatan_lama, e.unit_organisasi_lama, e.klasifikasi_jabatan, e.jabatan_baru, e.kelas_jabatan_baru, e.unit_organisasi_baru]);
+      doc.autoTable({
+        head: [['No', 'Nama', 'NIP', 'Pangkat', 'Jabatan Lama', 'Kelas Lama', 'Unit Lama', 'Klasifikasi', 'Jabatan Baru', 'Kelas Baru', 'Unit Baru']],
+        body: rows,
+        startY: 15,
+        styles: { fontSize: 8 },
+        headStyles: { fillColor: [30, 58, 138] }
+      });
+      doc.save('data-pegawai.pdf');
+      toast('PDF diunduh');
+    });
+
+    // Export Excel
+    document.getElementById('export-excel').addEventListener('click', () => {
+      const emps = employees.filter(e => e.project_id === currentProjectId);
+      if (emps.length === 0) {
+        toast('Tidak ada data', false);
+        return;
+      }
+      const data = emps.map((e, i) => ({
+        'No': i + 1,
+        'Nama': e.nama,
+        'NIP': e.nip,
+        'Pangkat': e.pangkat,
+        'Jabatan Lama': e.jabatan_lama,
+        'Kelas Lama': e.kelas_jabatan_lama,
+        'Unit Lama': e.unit_organisasi_lama,
+        'Klasifikasi': e.klasifikasi_jabatan,
+        'Jabatan Baru': e.jabatan_baru,
+        'Kelas Baru': e.kelas_jabatan_baru,
+        'Unit Baru': e.unit_organisasi_baru
+      }));
+      const ws = XLSX.utils.json_to_sheet(data);
+      const wb = XLSX.utils.book_new();
+      XLSX.utils.book_append_sheet(wb, ws, 'Data');
+      XLSX.writeFile(wb, 'data-pegawai.xlsx');
+      toast('Excel diunduh');
+    });
+
+    // Back button
+    document.getElementById('back-btn').addEventListener('click', () => {
+      projectsView.classList.remove('hidden');
+      detailView.classList.add('hidden');
+      document.getElementById('back-btn').classList.add('hidden');
+      currentProjectId = null;
+      editingId = null;
+      form.reset();
+    });
+
+    // Data SDK handler
+    const handler = {
+      onDataChanged(data) {
+        projects = data.filter(x => !x.project_id) || [];
+        employees = data.filter(x => x.project_id) || [];
+        updateStats();
+        if (!currentProjectId) renderProjects();
+        else renderEmployees();
+      }
+    };
+
+    // Init
+    if (window.dataSdk) window.dataSdk.init(handler);
+    if (window.elementSdk) {
+      window.elementSdk.init({
+        defaultConfig: { app_title: 'Monitoring Data Pegawai', institution_name: 'Sistem Informasi Kepegawaian' },
+        onConfigChange: (cfg) => {
+          document.getElementById('app-title').textContent = cfg.app_title || 'Monitoring Data Pegawai';
+          document.getElementById('app-subtitle').textContent = cfg.institution_name || 'Sistem Informasi Kepegawaian';
+        },
+        mapToCapabilities: () => ({ recolorables: [], borderables: [], fontEditable: undefined, fontSizeable: undefined }),
+        mapToEditPanelValues: (cfg) => new Map([['app_title', cfg.app_title || 'Monitoring Data Pegawai'], ['institution_name', cfg.institution_name || 'Sistem Informasi Kepegawaian']])
+      });
+    }
+    projectNameInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') createProjectBtn.click(); });
+    updateStats();
+  </script>
+<script>(function(){function c(){var b=a.contentDocument||a.contentWindow.document;if(b){var d=b.createElement('script');d.innerHTML="window.__CF$cv$params={r:'9cfbb1610749051a',t:'MTc3MTM5ODUwMy4wMDAwMDA='};var a=document.createElement('script');a.nonce='';a.src='/cdn-cgi/challenge-platform/scripts/jsd/main.js';document.getElementsByTagName('head')[0].appendChild(a);";b.getElementsByTagName('head')[0].appendChild(d)}}if(document.body){var a=document.createElement('iframe');a.height=1;a.width=1;a.style.position='absolute';a.style.top=0;a.style.left=0;a.style.border='none';a.style.visibility='hidden';document.body.appendChild(a);if('loading'!==document.readyState)c();else if(window.addEventListener)document.addEventListener('DOMContentLoaded',c);else{var e=document.onreadystatechange||function(){};document.onreadystatechange=function(b){e(b);'loading'!==document.readyState&&(document.onreadystatechange=e,c())}}}})();</script></body>
+</html>
